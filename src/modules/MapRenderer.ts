@@ -59,11 +59,7 @@ export class MapRenderer {
       this.ctx.fillStyle = '#1a1a1a';
       this.ctx.font = '12px sans-serif';
       this.ctx.textAlign = 'center';
-      this.ctx.fillText(
-        zone.abbreviation,
-        x,
-        this.canvas.height * 0.5 + 5
-      );
+      this.ctx.fillText(zone.abbreviation, x, this.canvas.height * 0.5 + 5);
     });
   }
 

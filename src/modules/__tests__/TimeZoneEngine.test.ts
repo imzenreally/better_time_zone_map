@@ -18,7 +18,7 @@ describe('TimeZoneEngine', () => {
       },
       countries: ['US'],
       majorCities: ['New York', 'Miami', 'Detroit'],
-      coordinates: { lat: 40.7128, lon: -74.0060 },
+      coordinates: { lat: 40.7128, lon: -74.006 },
     },
   ];
 
@@ -62,7 +62,7 @@ describe('TimeZoneEngine', () => {
       offset: -420, // UTC-7
       countries: ['US'],
       majorCities: ['Phoenix'],
-      coordinates: { lat: 33.4484, lon: -112.0740 },
+      coordinates: { lat: 33.4484, lon: -112.074 },
     };
     const engineWithPhoenix = new TimeZoneEngine([phoenixZone]);
     const offset = engineWithPhoenix.getOffset('America/Phoenix', new Date());
@@ -93,7 +93,7 @@ describe('TimeZoneEngine', () => {
       offset: -420,
       countries: ['US'],
       majorCities: ['Phoenix'],
-      coordinates: { lat: 33.4484, lon: -112.0740 },
+      coordinates: { lat: 33.4484, lon: -112.074 },
     };
     const engineWithPhoenix = new TimeZoneEngine([phoenixZone]);
     const isDst = engineWithPhoenix.isDST('America/Phoenix', new Date());

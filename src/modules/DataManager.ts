@@ -13,7 +13,7 @@ export class DataManager {
       const timezoneData = await import('../data/timezones.json');
       this.timeZones = timezoneData.default;
       return this.timeZones;
-    } catch (importError) {
+    } catch {
       try {
         // Fallback to fetch for browser environment
         const response = await fetch('/src/data/timezones.json');
@@ -24,6 +24,7 @@ export class DataManager {
         return this.timeZones!;
       } catch (error) {
         console.error('Error loading time zone data:', error);
+        // eslint-disable-next-line preserve-caught-error
         throw new Error('Failed to load time zone data');
       }
     }
