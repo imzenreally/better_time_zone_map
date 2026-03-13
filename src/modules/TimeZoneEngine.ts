@@ -50,4 +50,29 @@ export class TimeZoneEngine {
     // Phase 2 will add proper DST detection
     return zone.offset;
   }
+
+  /**
+   * Determines if a time zone is currently observing Daylight Saving Time.
+   *
+   * @param zoneId - The IANA time zone identifier (e.g., "America/New_York")
+   * @param date - The date to check for DST
+   * @returns true if the zone is observing DST on the given date, false otherwise
+   * @throws Error if the time zone ID is not found
+   */
+  isDST(zoneId: string, date: Date): boolean {
+    const zone = this.zones.get(zoneId);
+    if (!zone) {
+      throw new Error(`Time zone not found: ${zoneId}`);
+    }
+
+    // If no DST rules, not in DST
+    if (!zone.dstRules || !zone.dstRules.observes) {
+      return false;
+    }
+
+    // For MVP, use simple month-based detection (March-November = DST for northern hemisphere)
+    // Phase 2 will add proper DST calculation
+    const month = date.getMonth(); // 0-11
+    return month >= 2 && month < 10; // March (2) through October (9)
+  }
 }

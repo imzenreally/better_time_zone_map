@@ -72,4 +72,24 @@ describe('TimeZoneEngine', () => {
   it('should throw error for invalid zone ID in getOffset', () => {
     expect(() => engine.getOffset('Invalid/Zone', new Date())).toThrow('Time zone not found');
   });
+
+  it('should detect if a zone is in DST', () => {
+    const isDst = engine.isDST('America/New_York', new Date());
+    expect(typeof isDst).toBe('boolean');
+  });
+
+  it('should return false for zones without DST rules', () => {
+    const phoenixZone: TimeZone = {
+      id: 'America/Phoenix',
+      name: 'Mountain Standard Time',
+      abbreviation: 'MST',
+      offset: -420,
+      countries: ['US'],
+      majorCities: ['Phoenix'],
+      coordinates: { lat: 33.4484, lon: -112.0740 },
+    };
+    const engineWithPhoenix = new TimeZoneEngine([phoenixZone]);
+    const isDst = engineWithPhoenix.isDST('America/Phoenix', new Date());
+    expect(isDst).toBe(false);
+  });
 });
