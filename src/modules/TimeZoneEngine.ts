@@ -70,7 +70,7 @@ export class TimeZoneEngine {
       return false;
     }
 
-    // For MVP, use simple month-based detection (March-November = DST for northern hemisphere)
+    // For MVP, use simple month-based detection (March-October = DST for northern hemisphere)
     // Phase 2 will add proper DST calculation
     const month = date.getMonth(); // 0-11
     return month >= 2 && month < 10; // March (2) through October (9)

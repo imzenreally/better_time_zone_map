@@ -74,8 +74,15 @@ describe('TimeZoneEngine', () => {
   });
 
   it('should detect if a zone is in DST', () => {
-    const isDst = engine.isDST('America/New_York', new Date());
-    expect(typeof isDst).toBe('boolean');
+    // Test with a summer date (July = month 6, which is in DST period March-October)
+    const summerDate = new Date('2026-07-15');
+    const isDstSummer = engine.isDST('America/New_York', summerDate);
+    expect(isDstSummer).toBe(true);
+
+    // Test with a winter date (January = month 0, which is NOT in DST period)
+    const winterDate = new Date('2026-01-15');
+    const isDstWinter = engine.isDST('America/New_York', winterDate);
+    expect(isDstWinter).toBe(false);
   });
 
   it('should return false for zones without DST rules', () => {
@@ -91,5 +98,9 @@ describe('TimeZoneEngine', () => {
     const engineWithPhoenix = new TimeZoneEngine([phoenixZone]);
     const isDst = engineWithPhoenix.isDST('America/Phoenix', new Date());
     expect(isDst).toBe(false);
+  });
+
+  it('should throw error for invalid zone ID in isDST', () => {
+    expect(() => engine.isDST('Invalid/Zone', new Date())).toThrow('Time zone not found');
   });
 });
