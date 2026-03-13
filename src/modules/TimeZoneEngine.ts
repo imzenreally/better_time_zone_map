@@ -36,11 +36,11 @@ export class TimeZoneEngine {
    * Returns the UTC offset in minutes for the given time zone and date.
    *
    * @param zoneId - The IANA time zone identifier (e.g., "America/New_York")
-   * @param date - The date to get the offset for (used for DST calculation in future phases)
+   * @param _date - The date to get the offset for (used for DST calculation in future phases)
    * @returns The offset in minutes from UTC (e.g., -300 for UTC-5)
    * @throws Error if the time zone ID is not found
    */
-  getOffset(zoneId: string, date: Date): number {
+  getOffset(zoneId: string, _date: Date): number {
     const zone = this.zones.get(zoneId);
     if (!zone) {
       throw new Error(`Time zone not found: ${zoneId}`);

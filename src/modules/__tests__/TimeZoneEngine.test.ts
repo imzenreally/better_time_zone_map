@@ -68,4 +68,8 @@ describe('TimeZoneEngine', () => {
     const offset = engineWithPhoenix.getOffset('America/Phoenix', new Date());
     expect(offset).toBe(-420);
   });
+
+  it('should throw error for invalid zone ID in getOffset', () => {
+    expect(() => engine.getOffset('Invalid/Zone', new Date())).toThrow('Time zone not found');
+  });
 });
