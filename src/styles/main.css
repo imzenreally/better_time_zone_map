@@ -40,18 +40,23 @@ body {
   display: none;
 }
 
-.tooltip .zone-name {
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tooltip-zone-name {
   font-weight: 600;
   margin-bottom: 4px;
 }
 
-.tooltip .zone-time {
+.tooltip-time {
   font-family: 'SF Mono', Monaco, 'Courier New', monospace;
   font-size: 24px;
   margin-bottom: 4px;
 }
 
-.tooltip .zone-offset {
+.tooltip-offset {
   color: #666666;
   font-size: 12px;
 }

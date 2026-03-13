@@ -1,8 +1,16 @@
-// Entry point - will be implemented in Chunk 5
-console.log('Better Time Zone Map - Setup Complete');
+import { UIController } from './modules/UIController';
+import './styles/main.css';
 
-// Minimal DOM manipulation to show the app is loading
-const appEl = document.getElementById('app');
-if (appEl) {
-  appEl.textContent = 'Time Zone Map - Setting up...';
-}
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', async () => {
+  const canvas = document.getElementById('mapCanvas') as HTMLCanvasElement;
+  const tooltip = document.getElementById('tooltip') as HTMLElement;
+
+  if (!canvas || !tooltip) {
+    console.error('Required DOM elements not found');
+    return;
+  }
+
+  const controller = new UIController(canvas, tooltip);
+  await controller.initialize();
+});
