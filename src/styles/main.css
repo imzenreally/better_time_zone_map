@@ -1,0 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8f9fa;
+  color: #1a1a1a;
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+#mapCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.tooltip {
+  position: absolute;
+  background: #ffffff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 1000;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tooltip.hidden {
+  display: none;
+}
+
+.tooltip .zone-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tooltip .zone-time {
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.tooltip .zone-offset {
+  color: #666666;
+  font-size: 12px;
+}
