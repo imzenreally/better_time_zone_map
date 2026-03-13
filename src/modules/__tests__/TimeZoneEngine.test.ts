@@ -46,4 +46,26 @@ describe('TimeZoneEngine', () => {
   it('should throw error for invalid zone ID', () => {
     expect(() => engine.getCurrentTime('Invalid/Zone')).toThrow('Time zone not found');
   });
+
+  it('should get offset for a time zone', () => {
+    const offset = engine.getOffset('America/New_York', new Date());
+    expect(typeof offset).toBe('number');
+    // EST is -300 minutes (UTC-5) or EDT is -240 (UTC-4)
+    expect(offset === -300 || offset === -240).toBe(true);
+  });
+
+  it('should return correct offset for zone without DST', () => {
+    const phoenixZone: TimeZone = {
+      id: 'America/Phoenix',
+      name: 'Mountain Standard Time',
+      abbreviation: 'MST',
+      offset: -420, // UTC-7
+      countries: ['US'],
+      majorCities: ['Phoenix'],
+      coordinates: { lat: 33.4484, lon: -112.0740 },
+    };
+    const engineWithPhoenix = new TimeZoneEngine([phoenixZone]);
+    const offset = engineWithPhoenix.getOffset('America/Phoenix', new Date());
+    expect(offset).toBe(-420);
+  });
 });
