@@ -24,8 +24,7 @@ export class DataManager {
         return this.timeZones!;
       } catch (error) {
         console.error('Error loading time zone data:', error);
-        // eslint-disable-next-line preserve-caught-error
-        throw new Error('Failed to load time zone data');
+        throw new Error('Failed to load time zone data', { cause: error });
       }
     }
   }
