@@ -1,0 +1,50 @@
+[
+  {
+    "id": "America/New_York",
+    "name": "Eastern Standard Time",
+    "abbreviation": "EST",
+    "offset": -300,
+    "dstOffset": -240,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["US"],
+    "majorCities": ["New York", "Miami", "Detroit"],
+    "coordinates": {
+      "lat": 40.7128,
+      "lon": -74.006
+    }
+  },
+  {
+    "id": "Europe/London",
+    "name": "Greenwich Mean Time",
+    "abbreviation": "GMT",
+    "offset": 0,
+    "dstOffset": 60,
+    "dstRules": {
+      "start": "Last Sunday in March",
+      "end": "Last Sunday in October",
+      "observes": true
+    },
+    "countries": ["GB"],
+    "majorCities": ["London"],
+    "coordinates": {
+      "lat": 51.5074,
+      "lon": -0.1278
+    }
+  },
+  {
+    "id": "Asia/Tokyo",
+    "name": "Japan Standard Time",
+    "abbreviation": "JST",
+    "offset": 540,
+    "countries": ["JP"],
+    "majorCities": ["Tokyo", "Osaka"],
+    "coordinates": {
+      "lat": 35.6762,
+      "lon": 139.6503
+    }
+  }
+]
