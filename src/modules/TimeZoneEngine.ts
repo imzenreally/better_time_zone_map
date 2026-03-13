@@ -1,4 +1,4 @@
-import type { TimeZone, DSTTransition } from '../types/TimeZone';
+import type { TimeZone } from '../types/TimeZone';
 
 export class TimeZoneEngine {
   private zones: Map<string, TimeZone>;
