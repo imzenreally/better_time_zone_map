@@ -32,9 +32,15 @@ describe('TimeZoneEngine', () => {
   });
 
   it('should get current time for a time zone', () => {
+    const now = new Date();
     const time = engine.getCurrentTime('America/New_York');
     expect(time).toBeInstanceOf(Date);
     expect(time.getTime()).toBeGreaterThan(0);
+
+    // Verify offset was applied (EST is -300 minutes = -5 hours)
+    const expectedOffset = -300 * 60 * 1000; // -5 hours in milliseconds
+    const diff = time.getTime() - now.getTime();
+    expect(Math.abs(diff - expectedOffset)).toBeLessThan(1000); // within 1 second tolerance
   });
 
   it('should throw error for invalid zone ID', () => {
