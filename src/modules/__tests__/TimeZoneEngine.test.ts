@@ -30,4 +30,14 @@ describe('TimeZoneEngine', () => {
     expect(engine).toBeDefined();
     expect(engine).toBeInstanceOf(TimeZoneEngine);
   });
+
+  it('should get current time for a time zone', () => {
+    const time = engine.getCurrentTime('America/New_York');
+    expect(time).toBeInstanceOf(Date);
+    expect(time.getTime()).toBeGreaterThan(0);
+  });
+
+  it('should throw error for invalid zone ID', () => {
+    expect(() => engine.getCurrentTime('Invalid/Zone')).toThrow('Time zone not found');
+  });
 });
