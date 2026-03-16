@@ -10,6 +10,16 @@
   display: flex;
   flex-direction: column;
   z-index: 50;
+  transition: width 0.3s ease;
+}
+
+.pinned-zones-panel.collapsed {
+  width: 48px;
+}
+
+.pinned-zones-panel.collapsed .panel-header h2,
+.pinned-zones-panel.collapsed .panel-content {
+  display: none;
 }
 
 .panel-header {
@@ -158,4 +168,9 @@
   .pinned-zones-panel {
     width: 100%;
   }
+}
+
+.pinned-zones-panel.collapsed .panel-toggle {
+  transform: rotate(180deg);
+  margin: 0 auto;
 }

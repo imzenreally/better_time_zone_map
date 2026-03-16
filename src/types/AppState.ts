@@ -3,6 +3,7 @@ export interface AppState {
   searchQuery: string;
   theme: 'light' | 'dark';
   clockTickerHandle: number | null;
+  panelCollapsed: boolean;
 }
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -10,4 +11,5 @@ export const DEFAULT_APP_STATE: AppState = {
   searchQuery: '',
   theme: 'light',
   clockTickerHandle: null,
+  panelCollapsed: false,
 };

@@ -39,6 +39,8 @@ export class UIController {
       this.loadPinnedZones();
 
       // Step 2.7: Load and apply theme
+      this.loadPanelState();
+
       this.loadTheme();
 
       // Step 2.9: Initialize ThemeToggle
@@ -72,6 +74,8 @@ export class UIController {
           this.timeZoneEngine
         );
         this.pinnedZonesPanel.render(this.state.pinnedZoneIds);
+        this.applyPanelState();
+
       }
 
       // Step 4.7: Initialize SearchBar
@@ -436,6 +440,43 @@ Countries: ${zone.countries.join(', ')}
     const saved = localStorage.getItem('tzmap_theme') as 'light' | 'dark' | null;
     if (saved) {
       this.state.theme = saved;
+    }
+  }
+  togglePanel(): void {
+    this.state.panelCollapsed = !this.state.panelCollapsed;
+    this.persistPanelState();
+    this.applyPanelState();
+  }
+
+  private applyPanelState(): void {
+    const panel = document.getElementById('pinned-zones-panel');
+    const searchBar = document.getElementById('search-bar');
+
+    if (panel) {
+      if (this.state.panelCollapsed) {
+        panel.classList.add('collapsed');
+      } else {
+        panel.classList.remove('collapsed');
+      }
+    }
+
+    if (searchBar) {
+      if (this.state.panelCollapsed) {
+        searchBar.classList.add('panel-collapsed');
+      } else {
+        searchBar.classList.remove('panel-collapsed');
+      }
+    }
+  }
+
+  private persistPanelState(): void {
+    localStorage.setItem('tzmap_panel_collapsed', JSON.stringify(this.state.panelCollapsed));
+  }
+
+  private loadPanelState(): void {
+    const saved = localStorage.getItem('tzmap_panel_collapsed');
+    if (saved) {
+      this.state.panelCollapsed = JSON.parse(saved);
     }
   }
 }

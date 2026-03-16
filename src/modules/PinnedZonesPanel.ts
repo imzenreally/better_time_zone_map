@@ -24,6 +24,24 @@ export class PinnedZonesPanel {
     // Clear container safely
     this.container.textContent = '';
 
+    // Add panel header with toggle button
+    const header = document.createElement('div');
+    header.className = 'panel-header';
+
+    const title = document.createElement('h2');
+    title.textContent = 'Pinned Zones';
+    header.appendChild(title);
+
+    const toggleButton = document.createElement('button');
+    toggleButton.className = 'panel-toggle';
+    toggleButton.textContent = '◀';
+    toggleButton.title = 'Collapse panel';
+    toggleButton.setAttribute('aria-label', 'Collapse pinned zones panel');
+    toggleButton.onclick = () => this.uiController.togglePanel();
+    header.appendChild(toggleButton);
+
+    this.container.appendChild(header);
+
     if (pinnedZoneIds.length === 0) {
       this.container.appendChild(this.renderEmptyState());
       return;

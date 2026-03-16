@@ -4,6 +4,11 @@
   left: 40px;
   right: 340px; /* Leave space for pinned panel */
   z-index: 100;
+  transition: right 0.3s ease;
+}
+
+.search-bar.panel-collapsed {
+  right: 88px; /* Less space when panel is collapsed */
 }
 
 .search-input-wrapper {
