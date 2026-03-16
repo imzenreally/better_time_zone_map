@@ -1,6 +1,7 @@
 import { DataManager } from './DataManager';
 import { TimeZoneEngine } from './TimeZoneEngine';
 import { MapRenderer } from './MapRenderer';
+import { PinnedZonesPanel } from './PinnedZonesPanel';
 import type { TimeZone } from '../types/TimeZone';
 import type { AppState } from '../types/AppState';
 import { DEFAULT_APP_STATE } from '../types/AppState';
@@ -11,6 +12,7 @@ export class UIController {
   private dataManager: DataManager | null = null;
   private timeZoneEngine: TimeZoneEngine | null = null;
   private mapRenderer: MapRenderer | null = null;
+  private pinnedZonesPanel: PinnedZonesPanel | null = null;
   private timeZones: TimeZone[] | null = null;
   private state: AppState;
 
@@ -29,6 +31,9 @@ export class UIController {
       // Step 2: Initialize TimeZoneEngine
       this.timeZoneEngine = new TimeZoneEngine(this.timeZones);
 
+      // Step 2.5: Load persisted pinned zones
+      this.loadPinnedZones();
+
       // Step 3: Initialize MapRenderer with canvas dimensions
       const { width, height } = this.getCanvasDimensions();
       this.mapRenderer = new MapRenderer(this.canvas, this.timeZones, {
@@ -38,6 +43,17 @@ export class UIController {
 
       // Step 4: Render the map
       this.mapRenderer.render();
+
+      // Step 4.5: Initialize PinnedZonesPanel
+      const panelContainer = document.getElementById('pinned-zones-panel');
+      if (panelContainer && this.timeZoneEngine) {
+        this.pinnedZonesPanel = new PinnedZonesPanel(
+          panelContainer,
+          this,
+          this.timeZoneEngine
+        );
+        this.pinnedZonesPanel.render(this.state.pinnedZoneIds);
+      }
 
       // Step 5: Set up event listeners
       this.setupEventListeners();
@@ -82,7 +98,10 @@ export class UIController {
       }
     }
 
-    // TODO: Update pinned zones panel when implemented
+    // Update pinned zones panel
+    if (this.pinnedZonesPanel) {
+      this.pinnedZonesPanel.updateTimes(this.state.pinnedZoneIds);
+    }
   }
 
   private updateTooltipTime(zoneId: string): void {
@@ -169,6 +188,7 @@ export class UIController {
     const zone = this.mapRenderer.getZoneAtPosition(x, y);
 
     if (zone) {
+      this.addPinnedZone(zone.id);
       this.showZoneDetails(zone);
     }
   }
@@ -298,6 +318,53 @@ Countries: ${zone.countries.join(', ')}
       console.log(`Canvas resized to ${width}x${height}`);
     } catch (error) {
       console.error('Error handling window resize:', error);
+    }
+  }
+
+  addPinnedZone(zoneId: string): void {
+    if (this.state.pinnedZoneIds.includes(zoneId)) {
+      return; // Already pinned
+    }
+
+    if (this.state.pinnedZoneIds.length >= 10) {
+      alert('Maximum 10 zones can be pinned');
+      return;
+    }
+
+    this.state.pinnedZoneIds = [...this.state.pinnedZoneIds, zoneId];
+    this.persistPinnedZones();
+
+    if (this.pinnedZonesPanel) {
+      this.pinnedZonesPanel.render(this.state.pinnedZoneIds);
+    }
+  }
+
+  removePinnedZone(zoneId: string): void {
+    this.state.pinnedZoneIds = this.state.pinnedZoneIds.filter(
+      (id) => id !== zoneId
+    );
+    this.persistPinnedZones();
+
+    if (this.pinnedZonesPanel) {
+      this.pinnedZonesPanel.render(this.state.pinnedZoneIds);
+    }
+  }
+
+  private persistPinnedZones(): void {
+    localStorage.setItem(
+      'tzmap_pinned_zones',
+      JSON.stringify(this.state.pinnedZoneIds)
+    );
+  }
+
+  private loadPinnedZones(): void {
+    const saved = localStorage.getItem('tzmap_pinned_zones');
+    if (saved) {
+      try {
+        this.state.pinnedZoneIds = JSON.parse(saved);
+      } catch (e) {
+        console.warn('Failed to load pinned zones from localStorage');
+      }
     }
   }
 }
