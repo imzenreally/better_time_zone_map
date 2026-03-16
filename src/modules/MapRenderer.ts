@@ -86,8 +86,8 @@ export class MapRenderer {
   }
 
   private getZoneColor(zone: TimeZone): string {
-    // Simple color based on offset
-    const hue = ((zone.offset + 720) / 1440) * 360; // 0-360 degrees
+    // Map offset range [-720, 720] to hue [0, 360] and normalize
+    const hue = (((zone.offset + 720) / 1440) * 360) % 360;
     return `hsl(${hue}, 40%, 70%)`;
   }
 
@@ -159,13 +159,14 @@ export class MapRenderer {
   }
 
   private hslToHex(hsl: string): string {
-    const match = /hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/.exec(hsl);
+    const match = /hsl\(([\d.]+),\s*(\d+)%,\s*(\d+)%\)/.exec(hsl);
     if (!match) {
       console.warn(`Invalid HSL color: ${hsl}`);
       return '#000000';
     }
 
-    const h = parseInt(match[1]) / 360;
+    const hue = parseFloat(match[1]) % 360;
+    const h = hue / 360;
     const s = parseInt(match[2]) / 100;
     const l = parseInt(match[3]) / 100;
 

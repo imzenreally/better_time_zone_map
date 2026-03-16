@@ -72,3 +72,49 @@ describe('MapRenderer - Day/Night Gradients', () => {
     expect(rgb).toEqual({ r: 255, g: 0, b: 255 });
   });
 });
+
+describe('MapRenderer - Color Conversion', () => {
+  let canvas: HTMLCanvasElement;
+  let renderer: MapRenderer;
+
+  beforeEach(() => {
+    canvas = document.createElement('canvas');
+    const mockContext = {
+      fillRect: vi.fn(),
+      fillText: vi.fn(),
+    } as any;
+    vi.spyOn(canvas, 'getContext').mockReturnValue(mockContext);
+
+    canvas.width = 800;
+    canvas.height = 600;
+    renderer = new MapRenderer(canvas, mockZones, { width: 800, height: 600 });
+  });
+
+  it('should convert HSL to hex correctly', () => {
+    const hex = (renderer as any).hslToHex('hsl(180, 40%, 70%)');
+    expect(hex).toBe('#94d1d1');
+  });
+
+  it('should handle decimal hue values', () => {
+    const hex = (renderer as any).hslToHex('hsl(262.5, 40%, 70%)');
+    expect(hex).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(hex).not.toBe('#000000');
+  });
+
+  it('should handle invalid HSL gracefully', () => {
+    const hex = (renderer as any).hslToHex('invalid');
+    expect(hex).toBe('#000000');
+  });
+
+  it('should handle grayscale colors (zero saturation)', () => {
+    const hex = (renderer as any).hslToHex('hsl(0, 0%, 50%)');
+    expect(hex).toBe('#808080');
+  });
+
+  it('should normalize hue values over 360', () => {
+    // Hue 390 should be same as hue 30
+    const hex1 = (renderer as any).hslToHex('hsl(390, 40%, 70%)');
+    const hex2 = (renderer as any).hslToHex('hsl(30, 40%, 70%)');
+    expect(hex1).toBe(hex2);
+  });
+});
