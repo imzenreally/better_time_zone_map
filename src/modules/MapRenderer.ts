@@ -1,5 +1,7 @@
 import type { TimeZone } from '../types/TimeZone';
 import type { TimeZoneEngine } from './TimeZoneEngine';
+import { MapProjection } from './MapProjection';
+import type { TimeZoneBoundary, Polygon } from '../types/Geography';
 
 export interface MapRendererOptions {
   width: number;
@@ -12,6 +14,9 @@ export class MapRenderer {
   private timeZones: TimeZone[];
   private timeZoneEngine: TimeZoneEngine | null = null;
   private theme: 'light' | 'dark' = 'light';
+
+  // Geographic rendering support
+  private mapGeometry: TimeZoneBoundary[] | null = null;
 
   constructor(canvas: HTMLCanvasElement, timeZones: TimeZone[], options: MapRendererOptions) {
     this.canvas = canvas;
@@ -36,13 +41,29 @@ export class MapRenderer {
     this.theme = theme;
   }
 
+  /**
+   * Set map geometry data for geographic rendering.
+   * If not set or empty, renderer will use fallback rectangle rendering.
+   *
+   * @param geometry Array of time zone boundaries with polygon coordinates
+   */
+  setMapGeometry(geometry: TimeZoneBoundary[]): void {
+    this.mapGeometry = geometry;
+    console.log(`MapRenderer: Set map geometry with ${geometry.length} zones`);
+  }
+
   render(): void {
     // Clear canvas with theme-aware background
     this.ctx.fillStyle = this.theme === 'dark' ? '#0a0a0a' : '#e8f4f8';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw simple world map representation (rectangles for time zones)
-    this.drawSimpleMap();
+    // Choose rendering mode based on geometry availability
+    if (this.mapGeometry?.length) {
+      this.drawGeographicMap();
+    } else {
+      // Fallback to rectangle rendering
+      this.drawSimpleMap();
+    }
   }
 
   private drawSimpleMap(): void {
@@ -227,5 +248,108 @@ export class MapRenderer {
     const b = Math.round(base.b * (1 - opacity) + overlay.b * opacity);
 
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+
+  /**
+   * Draw time zones using geographic polygons with accurate boundaries.
+   * Each zone is filled with its color (offset-based + day/night gradient).
+   */
+  private drawGeographicMap(): void {
+    // Safety check (should be guaranteed by render() but be defensive)
+    if (!this.mapGeometry) return;
+
+    this.timeZones.forEach((zone) => {
+      // Find boundary data for this zone
+      const boundary = this.mapGeometry!.find(b => b.zoneId === zone.id);
+      if (!boundary) {
+        console.warn(`No boundary data for zone: ${zone.id}`);
+        return;
+      }
+
+      // Calculate zone color (existing logic)
+      const baseColorHSL = this.getZoneColor(zone);
+      const baseColor = this.hslToHex(baseColorHSL);
+
+      // Apply day/night gradient if TimeZoneEngine available
+      let finalColor = baseColor;
+      if (this.timeZoneEngine) {
+        const localTime = this.timeZoneEngine.getCurrentTime(zone.id);
+        const hour = localTime.getUTCHours();
+        const minute = localTime.getUTCMinutes();
+        const gradientColor = this.calculateDayNightColor(hour, minute);
+        finalColor = this.blendColors(baseColor, gradientColor, 0.6);
+      }
+
+      // Draw all polygons for this zone
+      this.ctx.fillStyle = finalColor;
+      boundary.polygons.forEach(polygon => {
+        this.drawPolygon(polygon.coordinates);
+      });
+
+      // Draw zone label at representative point
+      this.drawZoneLabel(zone);
+    });
+  }
+
+  /**
+   * Draw a single polygon on the canvas.
+   * Converts geographic coordinates to canvas pixels using projection.
+   *
+   * @param coordinates Array of [longitude, latitude] pairs
+   */
+  private drawPolygon(coordinates: [number, number][]): void {
+    if (coordinates.length < 3) {
+      console.warn('Invalid polygon: less than 3 points');
+      return;
+    }
+
+    this.ctx.beginPath();
+
+    coordinates.forEach((coord, index) => {
+      const [lon, lat] = coord;
+      const { x, y } = MapProjection.projectToCanvas(
+        lon,
+        lat,
+        this.canvas.width,
+        this.canvas.height
+      );
+
+      if (index === 0) {
+        this.ctx.moveTo(x, y);
+      } else {
+        this.ctx.lineTo(x, y);
+      }
+    });
+
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+
+  /**
+   * Draw zone label at the zone's representative point.
+   * Uses existing zone.coordinates (from timezones.json).
+   *
+   * @param zone TimeZone with coordinates for label placement
+   */
+  private drawZoneLabel(zone: TimeZone): void {
+    const { x, y } = MapProjection.projectToCanvas(
+      zone.coordinates.lon,
+      zone.coordinates.lat,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    // Draw label with stroke for visibility (existing technique)
+    this.ctx.font = '12px sans-serif';
+    this.ctx.textAlign = 'center';
+
+    // Stroke (outline)
+    this.ctx.strokeStyle = this.theme === 'dark' ? '#000000' : '#ffffff';
+    this.ctx.lineWidth = 3;
+    this.ctx.strokeText(zone.abbreviation, x, y);
+
+    // Fill
+    this.ctx.fillStyle = this.theme === 'dark' ? '#e8e8e8' : '#1a1a1a';
+    this.ctx.fillText(zone.abbreviation, x, y);
   }
 }
