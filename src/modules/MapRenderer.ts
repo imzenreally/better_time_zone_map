@@ -52,8 +52,9 @@ export class MapRenderer {
       const hourOffset = zone.offset / 60;
       const x = ((hourOffset + 12) / 24) * this.canvas.width;
 
-      // Get base color
-      const baseColor = this.getZoneColor(zone);
+      // Get base color and convert from HSL to hex
+      const baseColorHSL = this.getZoneColor(zone);
+      const baseColor = this.hslToHex(baseColorHSL);
 
       // Apply day/night gradient if TimeZoneEngine available
       let finalColor = baseColor;
@@ -155,6 +156,44 @@ export class MapRenderer {
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16),
     };
+  }
+
+  private hslToHex(hsl: string): string {
+    const match = /hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/.exec(hsl);
+    if (!match) {
+      console.warn(`Invalid HSL color: ${hsl}`);
+      return '#000000';
+    }
+
+    const h = parseInt(match[1]) / 360;
+    const s = parseInt(match[2]) / 100;
+    const l = parseInt(match[3]) / 100;
+
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+
+    let r, g, b;
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    } else {
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+
+    const rHex = Math.round(r * 255).toString(16).padStart(2, '0');
+    const gHex = Math.round(g * 255).toString(16).padStart(2, '0');
+    const bHex = Math.round(b * 255).toString(16).padStart(2, '0');
+
+    return `#${rHex}${gHex}${bHex}`;
   }
 
   private blendColors(
