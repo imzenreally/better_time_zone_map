@@ -75,6 +75,23 @@ Add full interactive map controls allowing users to pan around the world and zoo
           ]
         }
       ]
+    },
+    {
+      "zoneId": "Asia/Kamchatka",
+      "polygons": [
+        {
+          "coordinates": [
+            [159.0, 53.0],
+            [160.0, 54.0]
+          ]
+        },
+        {
+          "coordinates": [
+            [-179.0, 52.0],
+            [-178.0, 53.0]
+          ]
+        }
+      ]
     }
   ]
 }
@@ -334,7 +351,9 @@ private drawPolygon(coordinates: [number, number][]): void {
 **Zone label positioning:**
 ```typescript
 private drawZoneLabel(zone: TimeZone, boundary: TimeZoneBoundary): void {
-  // Option 1: Use zone.coordinates (existing representative point)
+  // Use zone.coordinates (representative point defined in timezones.json)
+  // Each time zone entry already has a coordinates field with lat/lon
+  // representing a good label position for that zone
   const { x, y } = this.projection.projectToCanvas(
     zone.coordinates.lon,
     zone.coordinates.lat,
@@ -342,7 +361,7 @@ private drawZoneLabel(zone: TimeZone, boundary: TimeZoneBoundary): void {
     this.canvas.height
   );
 
-  // Draw label with stroke for visibility (existing code)
+  // Draw label with stroke for visibility (existing technique)
   this.ctx.font = '12px sans-serif';
   this.ctx.textAlign = 'center';
 
@@ -354,6 +373,9 @@ private drawZoneLabel(zone: TimeZone, boundary: TimeZoneBoundary): void {
   // Fill
   this.ctx.fillStyle = this.theme === 'dark' ? '#e8e8e8' : '#1a1a1a';
   this.ctx.fillText(zone.abbreviation, x, y);
+
+  // Note: boundary parameter available for future use
+  // (e.g., calculating polygon centroid if needed)
 }
 ```
 
@@ -590,13 +612,10 @@ private zoomViewport(factor: number, mouseX: number, mouseY: number): void {
 
   if (newZoom === oldZoom) return; // Hit zoom limit
 
-  // Zoom toward mouse position (keeps mouse point stationary)
-  const rect = this.canvas.getBoundingClientRect();
-  const canvasX = mouseX - rect.left;
-  const canvasY = mouseY - rect.top;
-
-  // TODO: Adjust center to keep mouse position fixed
-  // This requires more complex math - can implement in follow-up
+  // Simple zoom at viewport center (zoom-to-cursor deferred)
+  // For Phase B MVP, zoom focuses on viewport center, not mouse position
+  // Future enhancement: Calculate geographic point under mouse and adjust
+  // center to keep that point fixed during zoom
 
   this.state.mapViewport.zoomLevel = newZoom;
 
@@ -721,7 +740,8 @@ resetViewport(): void {
 **Map geometry loading failure:**
 - Log error to console
 - Fall back to rectangle rendering (drawSimpleMap)
-- Show subtle indicator to user? (optional)
+- No UI indicator needed (user sees working app with rectangle visualization)
+- Can add indicator in future if user feedback suggests confusion
 
 **Projection errors:**
 - Validate coordinate ranges before projection
