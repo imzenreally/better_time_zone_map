@@ -88,4 +88,51 @@ export class MapRenderer {
 
     return null;
   }
+
+  private calculateDayNightColor(hour: number, minute: number): string {
+    const decimalHour = hour + minute / 60;
+
+    if (decimalHour >= 20 || decimalHour < 6) {
+      // Night
+      return '#1a2332';
+    } else if (decimalHour >= 6 && decimalHour < 8) {
+      // Dawn (gradient)
+      const progress = (decimalHour - 6) / 2; // 0 to 1
+      return this.interpolateColor('#1a2332', '#fbbf24', progress);
+    } else if (decimalHour >= 8 && decimalHour < 18) {
+      // Day
+      return '#fef3c7';
+    } else {
+      // Dusk (gradient)
+      const progress = (decimalHour - 18) / 2; // 0 to 1
+      return this.interpolateColor('#fef3c7', '#1a2332', progress);
+    }
+  }
+
+  private interpolateColor(
+    color1: string,
+    color2: string,
+    progress: number
+  ): string {
+    const c1 = this.hexToRgb(color1);
+    const c2 = this.hexToRgb(color2);
+
+    const r = Math.round(c1.r + (c2.r - c1.r) * progress);
+    const g = Math.round(c1.g + (c2.g - c1.g) * progress);
+    const b = Math.round(c1.b + (c2.b - c1.b) * progress);
+
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+
+  private hexToRgb(hex: string): { r: number; g: number; b: number } {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) {
+      return { r: 0, g: 0, b: 0 };
+    }
+    return {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+    };
+  }
 }
