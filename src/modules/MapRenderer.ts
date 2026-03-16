@@ -124,8 +124,99 @@ export class MapRenderer {
     return `hsl(${hue}, 40%, 70%)`;
   }
 
-  getZoneAtPosition(x: number, y: number): TimeZone | null {
-    // Check if clicked position is within a zone
+  /**
+   * Test if a geographic point is inside a polygon using ray casting algorithm.
+   *
+   * @param lon Point longitude
+   * @param lat Point latitude
+   * @param coordinates Polygon coordinates [[lon, lat], ...]
+   * @returns true if point is inside polygon
+   */
+  private isPointInPolygon(
+    lon: number,
+    lat: number,
+    coordinates: [number, number][]
+  ): boolean {
+    let inside = false;
+
+    for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
+      const [xi, yi] = coordinates[i];
+      const [xj, yj] = coordinates[j];
+
+      // Ray casting: cast horizontal ray from point to right
+      // Count intersections with polygon edges
+      const intersect =
+        yi > lat !== yj > lat &&
+        lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+
+      if (intersect) {
+        inside = !inside;
+      }
+    }
+
+    return inside;
+  }
+
+  /**
+   * Determine which time zone is at the given canvas position.
+   * Uses point-in-polygon testing for geographic rendering,
+   * falls back to rectangle detection for simple rendering.
+   *
+   * @param canvasX Canvas X coordinate (pixels)
+   * @param canvasY Canvas Y coordinate (pixels)
+   * @returns TimeZone at position, or null if none
+   */
+  getZoneAtPosition(canvasX: number, canvasY: number): TimeZone | null {
+    // Use geographic detection if geometry available
+    if (this.mapGeometry && this.mapGeometry.length > 0) {
+      return this.getZoneAtPositionGeographic(canvasX, canvasY);
+    }
+
+    // Fallback to rectangle detection
+    return this.getZoneAtPositionSimple(canvasX, canvasY);
+  }
+
+  /**
+   * Geographic zone detection using point-in-polygon testing.
+   */
+  private getZoneAtPositionGeographic(
+    canvasX: number,
+    canvasY: number
+  ): TimeZone | null {
+    // Convert canvas position to geographic coordinates
+    const { lon, lat } = MapProjection.unproject(
+      canvasX,
+      canvasY,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    // Test each zone's polygons
+    for (const zone of this.timeZones) {
+      const boundary = this.mapGeometry!.find(b => b.zoneId === zone.id);
+      if (!boundary) continue;
+
+      // Test each polygon in this zone
+      for (const polygon of boundary.polygons) {
+        if (this.isPointInPolygon(lon, lat, polygon.coordinates)) {
+          return zone;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Simple rectangle-based zone detection (fallback).
+   * This is the EXISTING logic from drawSimpleMap(), extracted into a method.
+   * No changes to the algorithm - just refactored for reuse.
+   */
+  private getZoneAtPositionSimple(
+    canvasX: number,
+    canvasY: number
+  ): TimeZone | null {
+    // This logic already exists in the codebase - we're just extracting it
     const zoneWidth = this.canvas.width / 24;
 
     for (const zone of this.timeZones) {
@@ -136,7 +227,12 @@ export class MapRenderer {
       const zoneTop = this.canvas.height * 0.3;
       const zoneBottom = this.canvas.height * 0.7;
 
-      if (x >= zoneLeft && x <= zoneRight && y >= zoneTop && y <= zoneBottom) {
+      if (
+        canvasX >= zoneLeft &&
+        canvasX <= zoneRight &&
+        canvasY >= zoneTop &&
+        canvasY <= zoneBottom
+      ) {
         return zone;
       }
     }
