@@ -4,7 +4,7 @@ import type { TimeZoneBoundary } from '../types/Geography';
 
 export class DataManager {
   private timeZones: TimeZone[] | null = null;
-  private mapGeometry: MapGeometry | null = null;
+  private mapGeometry: TimeZoneBoundary[] | null = null;
 
   async loadTimeZones(): Promise<TimeZone[]> {
     if (this.timeZones) {
@@ -39,7 +39,13 @@ export class DataManager {
     return this.timeZones;
   }
 
-  async loadMapGeometry(): Promise<MapGeometry> {
+  /**
+   * Load map geometry (time zone boundary polygons) from JSON file.
+   * Used for geographic rendering of time zones.
+   *
+   * @returns Array of time zone boundaries, or empty array if loading fails
+   */
+  async loadMapGeometry(): Promise<TimeZoneBoundary[]> {
     if (this.mapGeometry) {
       return this.mapGeometry;
     }
@@ -47,31 +53,49 @@ export class DataManager {
     try {
       // Try to load using dynamic import first (works in Node.js and modern browsers)
       const geometryData = await import('../data/map-geometry.json');
-      this.mapGeometry = geometryData.default;
-      return this.mapGeometry;
-    } catch {
-      try {
-        // Fallback to fetch for browser environment
-        const response = await fetch('/src/data/map-geometry.json');
-        if (!response.ok) {
-          throw new Error(`Failed to load map geometry: ${response.statusText}`);
-        }
-        this.mapGeometry = await response.json();
-        return this.mapGeometry!;
-      } catch (error) {
-        console.error('Error loading map geometry data:', error);
-        throw new Error('Failed to load map geometry data', { cause: error });
+      const data: MapGeometry = geometryData.default;
+
+      // Validate structure
+      if (!data.boundaries || !Array.isArray(data.boundaries)) {
+        console.warn('Invalid map geometry format: missing boundaries array');
+        this.mapGeometry = [];
+        return [];
       }
+
+      // Validate zone IDs match existing timezones (if loaded)
+      if (this.timeZones) {
+        const validZoneIds = new Set(this.timeZones.map(z => z.id));
+        const invalidZones = data.boundaries.filter(
+          b => !validZoneIds.has(b.zoneId)
+        );
+
+        if (invalidZones.length > 0) {
+          console.warn(
+            `Map geometry contains ${invalidZones.length} zones not in timezones.json:`,
+            invalidZones.slice(0, 5).map(z => z.zoneId)
+          );
+        }
+      }
+
+      this.mapGeometry = data.boundaries;
+      console.log(`Loaded map geometry: ${data.boundaries.length} zones`);
+      return data.boundaries;
+    } catch (error) {
+      console.error('Failed to load map geometry:', error);
+      // Return empty array - app will use fallback rendering
+      this.mapGeometry = [];
+      return [];
     }
   }
 
-  getZoneBoundary(zoneId: string): TimeZoneBoundary | undefined {
-    if (!this.mapGeometry) {
-      throw new Error('Map geometry not loaded. Call loadMapGeometry() first.');
-    }
-
-    return this.mapGeometry.boundaries.find(
-      (boundary) => boundary.zoneId === zoneId
-    );
+  /**
+   * Get boundary data for a specific time zone.
+   *
+   * @param zoneId IANA time zone identifier
+   * @returns TimeZoneBoundary or null if not found
+   */
+  getZoneBoundary(zoneId: string): TimeZoneBoundary | null {
+    if (!this.mapGeometry) return null;
+    return this.mapGeometry.find(b => b.zoneId === zoneId) || null;
   }
 }
