@@ -41,6 +41,9 @@ export class UIController {
         height,
       });
 
+      // NEW: Set TimeZoneEngine reference
+      this.mapRenderer.setTimeZoneEngine(this.timeZoneEngine);
+
       // Step 4: Render the map
       this.mapRenderer.render();
 
@@ -101,6 +104,11 @@ export class UIController {
     // Update pinned zones panel
     if (this.pinnedZonesPanel) {
       this.pinnedZonesPanel.updateTimes(this.state.pinnedZoneIds);
+    }
+
+    // Re-render map with updated gradients
+    if (this.mapRenderer) {
+      this.mapRenderer.render();
     }
   }
 
@@ -311,6 +319,11 @@ Countries: ${zone.countries.join(', ')}
         width,
         height,
       });
+
+      // Set TimeZoneEngine reference
+      if (this.timeZoneEngine) {
+        this.mapRenderer.setTimeZoneEngine(this.timeZoneEngine);
+      }
 
       // Re-render the map
       this.mapRenderer.render();

@@ -1,4 +1,5 @@
 import type { TimeZone } from '../types/TimeZone';
+import type { TimeZoneEngine } from './TimeZoneEngine';
 
 export interface MapRendererOptions {
   width: number;
@@ -9,6 +10,7 @@ export class MapRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private timeZones: TimeZone[];
+  private timeZoneEngine: TimeZoneEngine | null = null;
 
   constructor(canvas: HTMLCanvasElement, timeZones: TimeZone[], options: MapRendererOptions) {
     this.canvas = canvas;
@@ -23,6 +25,10 @@ export class MapRenderer {
       throw new Error('Could not get 2D context from canvas');
     }
     this.ctx = context;
+  }
+
+  setTimeZoneEngine(engine: TimeZoneEngine): void {
+    this.timeZoneEngine = engine;
   }
 
   render(): void {
@@ -46,8 +52,23 @@ export class MapRenderer {
       const hourOffset = zone.offset / 60;
       const x = ((hourOffset + 12) / 24) * this.canvas.width;
 
+      // Get base color
+      const baseColor = this.getZoneColor(zone);
+
+      // Apply day/night gradient if TimeZoneEngine available
+      let finalColor = baseColor;
+      if (this.timeZoneEngine) {
+        const localTime = this.timeZoneEngine.getCurrentTime(zone.id);
+        const hour = localTime.getUTCHours();
+        const minute = localTime.getUTCMinutes();
+        const gradientColor = this.calculateDayNightColor(hour, minute);
+
+        // Blend base color with gradient (60% opacity)
+        finalColor = this.blendColors(baseColor, gradientColor, 0.6);
+      }
+
       // Draw zone rectangle
-      this.ctx.fillStyle = this.getZoneColor(zone);
+      this.ctx.fillStyle = finalColor;
       this.ctx.fillRect(
         x - zoneWidth / 2,
         this.canvas.height * 0.3,
@@ -134,5 +155,20 @@ export class MapRenderer {
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16),
     };
+  }
+
+  private blendColors(
+    baseColor: string,
+    overlayColor: string,
+    opacity: number
+  ): string {
+    const base = this.hexToRgb(baseColor);
+    const overlay = this.hexToRgb(overlayColor);
+
+    const r = Math.round(base.r * (1 - opacity) + overlay.r * opacity);
+    const g = Math.round(base.g * (1 - opacity) + overlay.g * opacity);
+    const b = Math.round(base.b * (1 - opacity) + overlay.b * opacity);
+
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
 }
