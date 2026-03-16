@@ -2,6 +2,8 @@ import { DataManager } from './DataManager';
 import { TimeZoneEngine } from './TimeZoneEngine';
 import { MapRenderer } from './MapRenderer';
 import type { TimeZone } from '../types/TimeZone';
+import type { AppState } from '../types/AppState';
+import { DEFAULT_APP_STATE } from '../types/AppState';
 
 export class UIController {
   private canvas: HTMLCanvasElement;
@@ -10,10 +12,12 @@ export class UIController {
   private timeZoneEngine: TimeZoneEngine | null = null;
   private mapRenderer: MapRenderer | null = null;
   private timeZones: TimeZone[] | null = null;
+  private state: AppState;
 
   constructor(canvas: HTMLCanvasElement, tooltip: HTMLElement) {
     this.canvas = canvas;
     this.tooltip = tooltip;
+    this.state = { ...DEFAULT_APP_STATE };
   }
 
   async initialize(): Promise<void> {
@@ -38,10 +42,64 @@ export class UIController {
       // Step 5: Set up event listeners
       this.setupEventListeners();
 
+      // Step 6: Start clock ticker
+      this.startClockTicker();
+
       console.log('UIController initialized successfully');
     } catch (error) {
       console.error('Failed to initialize UIController:', error);
       throw error;
+    }
+  }
+
+  startClockTicker(): void {
+    // Clear any existing ticker
+    if (this.state.clockTickerHandle !== null) {
+      clearInterval(this.state.clockTickerHandle);
+    }
+
+    // Start new ticker (1000ms interval)
+    const handle = setInterval(() => {
+      this.updateAllTimes();
+    }, 1000) as unknown as number;
+
+    this.state.clockTickerHandle = handle;
+  }
+
+  stopClockTicker(): void {
+    if (this.state.clockTickerHandle !== null) {
+      clearInterval(this.state.clockTickerHandle);
+      this.state.clockTickerHandle = null;
+    }
+  }
+
+  private updateAllTimes(): void {
+    // Update tooltip if visible
+    if (this.tooltip && !this.tooltip.classList.contains('hidden')) {
+      const zoneId = this.tooltip.dataset.zoneId;
+      if (zoneId && this.timeZoneEngine) {
+        this.updateTooltipTime(zoneId);
+      }
+    }
+
+    // TODO: Update pinned zones panel when implemented
+  }
+
+  private updateTooltipTime(zoneId: string): void {
+    if (!this.timeZoneEngine) return;
+
+    const zone = this.timeZones?.find((z) => z.id === zoneId);
+    if (!zone) return;
+
+    const currentTime = this.timeZoneEngine.getCurrentTime(zoneId);
+    const hours = currentTime.getUTCHours();
+    const minutes = currentTime.getUTCMinutes();
+    const seconds = currentTime.getUTCSeconds();
+    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    const timeElement = this.tooltip.querySelector('.tooltip-time');
+    if (timeElement) {
+      timeElement.textContent = timeString;
     }
   }
 
@@ -71,6 +129,11 @@ export class UIController {
     // Window resize to recreate renderer
     window.addEventListener('resize', () => {
       this.handleWindowResize();
+    });
+
+    // Cleanup ticker on window unload
+    window.addEventListener('beforeunload', () => {
+      this.stopClockTicker();
     });
   }
 
@@ -127,6 +190,9 @@ export class UIController {
 
       // Clear and rebuild tooltip with safe DOM methods
       this.tooltip.textContent = '';
+
+      // Store zone ID for live updates
+      this.tooltip.dataset.zoneId = zone.id;
 
       const content = document.createElement('div');
       content.className = 'tooltip-content';
