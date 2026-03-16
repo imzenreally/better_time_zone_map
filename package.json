@@ -28,6 +28,7 @@
   "homepage": "https://github.com/imzenreally/better_time_zone_map#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@turf/turf": "^7.3.4",
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
