@@ -6,8 +6,10 @@
  * polar distortion, suitable for world overview maps.
  */
 export class MapProjection {
-  // Miller projection Y axis range (approximately -2.3 to 2.3)
-  private static readonly MILLER_Y_MAX = 2.3;
+  // Miller projection Y axis range computed from ±90° latitude
+  // True Miller Y at ±90° latitude: 1.25 * ln(tan(π/4 + 0.4*π/2))
+  private static readonly MILLER_Y_MAX =
+    1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * Math.PI / 2));
 
   /**
    * Project geographic coordinates to canvas pixel coordinates.
@@ -18,7 +20,7 @@ export class MapProjection {
    * @param canvasHeight Height of canvas in pixels
    * @returns Canvas coordinates {x, y}
    */
-  projectToCanvas(
+  static projectToCanvas(
     lon: number,
     lat: number,
     canvasWidth: number,
@@ -54,7 +56,7 @@ export class MapProjection {
    * @param canvasHeight Height of canvas in pixels
    * @returns Geographic coordinates {lon, lat}
    */
-  unproject(
+  static unproject(
     canvasX: number,
     canvasY: number,
     canvasWidth: number,
