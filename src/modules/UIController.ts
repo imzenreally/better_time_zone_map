@@ -5,6 +5,7 @@ import { PinnedZonesPanel } from './PinnedZonesPanel';
 import { SearchBar } from './SearchBar';
 import { ThemeToggle } from './ThemeToggle';
 import type { TimeZone } from '../types/TimeZone';
+import type { TimeZoneBoundary } from '../types/Geography';
 import type { AppState } from '../types/AppState';
 import { DEFAULT_APP_STATE } from '../types/AppState';
 
@@ -18,6 +19,7 @@ export class UIController {
   private searchBar: SearchBar | null = null;
   private themeToggle: ThemeToggle | null = null;
   private timeZones: TimeZone[] | null = null;
+  private mapGeometry: TimeZoneBoundary[] = [];
   private state: AppState;
 
   constructor(canvas: HTMLCanvasElement, tooltip: HTMLElement) {
@@ -34,6 +36,11 @@ export class UIController {
 
       // Step 2: Initialize TimeZoneEngine
       this.timeZoneEngine = new TimeZoneEngine(this.timeZones);
+
+      // Step 2.3: Load map geometry for geographic rendering
+      const mapGeometry = await this.dataManager.loadMapGeometry();
+      this.mapGeometry = mapGeometry; // Cache for resize handler
+      console.log(`Loaded map geometry: ${mapGeometry.length} zones`);
 
       // Step 2.5: Load persisted pinned zones
       this.loadPinnedZones();
@@ -61,6 +68,13 @@ export class UIController {
 
       // NEW: Set TimeZoneEngine reference
       this.mapRenderer.setTimeZoneEngine(this.timeZoneEngine);
+
+      // NEW: Set map geometry for geographic rendering
+      if (mapGeometry.length > 0) {
+        this.mapRenderer.setMapGeometry(mapGeometry);
+      } else {
+        console.warn('No map geometry loaded - using fallback rectangle rendering');
+      }
 
       // Step 4: Render the map
       this.mapRenderer.render();
@@ -350,6 +364,11 @@ Countries: ${zone.countries.join(', ')}
       // Set TimeZoneEngine reference
       if (this.timeZoneEngine) {
         this.mapRenderer.setTimeZoneEngine(this.timeZoneEngine);
+      }
+
+      // Restore map geometry from cache
+      if (this.mapGeometry.length > 0) {
+        this.mapRenderer.setMapGeometry(this.mapGeometry);
       }
 
       // Set theme
