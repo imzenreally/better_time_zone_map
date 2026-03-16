@@ -348,7 +348,7 @@ npm install --save-dev @turf/turf
 
 ### Step 2: Create simplification script
 
-- [ ] **Create script**
+- [ ] **Create simplification script file**
 
 ```javascript
 // scripts/simplify-geometry.js
@@ -520,7 +520,15 @@ Wrote src/data/map-geometry.json (0.45 MB)
 Boundaries: 425
 ```
 
-### Step 4: Verify geometry file structure
+### Step 4: Verify geometry file structure and size
+
+- [ ] **Check file size**
+
+```bash
+ls -lh src/data/map-geometry.json
+```
+
+Expected: File size between 300KB and 1MB. If larger than 1MB, increase simplification tolerance in script and regenerate.
 
 - [ ] **Check first zone in file**
 
@@ -951,6 +959,8 @@ Open http://localhost:5173 and verify:
 - ✅ Dark mode toggle works (background + text contrast)
 - ✅ No console errors about missing boundaries
 
+**If any check fails:** Do NOT proceed. Debug the issue, fix it, and re-test before committing.
+
 ### Step 6: Commit geographic rendering
 
 - [ ] **Commit**
@@ -1309,21 +1319,37 @@ if (mapGeometry.length > 0) {
 }
 ```
 
-- [ ] **Add mapGeometry property**
+- [ ] **Add mapGeometry property to UIController class**
+
+Add this property with the other private fields at the top of the class:
 
 ```typescript
-// Add property to UIController class
+// In UIController class, add with existing private properties:
+private mapGeometry: TimeZoneBoundary[] = [];
+```
+
+Full context (for reference):
+```typescript
 export class UIController {
   private canvas: HTMLCanvasElement;
   private tooltip: HTMLElement;
   private dataManager: DataManager | null = null;
   private timeZoneEngine: TimeZoneEngine | null = null;
   private mapRenderer: MapRenderer | null = null;
-  // ... other properties
-  private mapGeometry: TimeZoneBoundary[] = []; // NEW
+  private pinnedZonesPanel: PinnedZonesPanel | null = null;
+  private searchBar: SearchBar | null = null;
+  private themeToggle: ThemeToggle | null = null;
+  private timeZones: TimeZone[] | null = null;
+  private state: AppState;
+  private mapGeometry: TimeZoneBoundary[] = []; // ADD THIS
+
+  constructor(canvas: HTMLCanvasElement, tooltip: HTMLElement) {
+    // ... existing constructor
+  }
+}
 ```
 
-- [ ] **Cache geometry in initialize() method**
+- [ ] **Cache geometry in initialize() method after loading**
 
 ```typescript
 // In UIController.initialize() after loading geometry:
