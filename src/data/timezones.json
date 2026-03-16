@@ -18,6 +18,174 @@
     }
   },
   {
+    "id": "America/Los_Angeles",
+    "name": "Pacific Standard Time",
+    "abbreviation": "PST",
+    "offset": -480,
+    "dstOffset": -420,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["US"],
+    "majorCities": ["Los Angeles", "San Francisco", "Seattle"],
+    "coordinates": {
+      "lat": 34.0522,
+      "lon": -118.2437
+    }
+  },
+  {
+    "id": "America/Denver",
+    "name": "Mountain Standard Time",
+    "abbreviation": "MST",
+    "offset": -420,
+    "dstOffset": -360,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["US"],
+    "majorCities": ["Denver", "Phoenix", "Salt Lake City"],
+    "coordinates": {
+      "lat": 39.7392,
+      "lon": -104.9903
+    }
+  },
+  {
+    "id": "America/Chicago",
+    "name": "Central Standard Time",
+    "abbreviation": "CST",
+    "offset": -360,
+    "dstOffset": -300,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["US"],
+    "majorCities": ["Chicago", "Houston", "Dallas"],
+    "coordinates": {
+      "lat": 41.8781,
+      "lon": -87.6298
+    }
+  },
+  {
+    "id": "America/Anchorage",
+    "name": "Alaska Standard Time",
+    "abbreviation": "AKST",
+    "offset": -540,
+    "dstOffset": -480,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["US"],
+    "majorCities": ["Anchorage", "Juneau"],
+    "coordinates": {
+      "lat": 61.2181,
+      "lon": -149.9003
+    }
+  },
+  {
+    "id": "Pacific/Honolulu",
+    "name": "Hawaii-Aleutian Standard Time",
+    "abbreviation": "HST",
+    "offset": -600,
+    "countries": ["US"],
+    "majorCities": ["Honolulu"],
+    "coordinates": {
+      "lat": 21.3099,
+      "lon": -157.8581
+    }
+  },
+  {
+    "id": "America/Sao_Paulo",
+    "name": "Brasilia Time",
+    "abbreviation": "BRT",
+    "offset": -180,
+    "dstOffset": -120,
+    "dstRules": {
+      "start": "Third Sunday in October",
+      "end": "Third Sunday in February",
+      "observes": true
+    },
+    "countries": ["BR"],
+    "majorCities": ["São Paulo", "Rio de Janeiro", "Brasília"],
+    "coordinates": {
+      "lat": -23.5505,
+      "lon": -46.6333
+    }
+  },
+  {
+    "id": "America/Buenos_Aires",
+    "name": "Argentina Time",
+    "abbreviation": "ART",
+    "offset": -180,
+    "countries": ["AR"],
+    "majorCities": ["Buenos Aires", "Córdoba"],
+    "coordinates": {
+      "lat": -34.6037,
+      "lon": -58.3816
+    }
+  },
+  {
+    "id": "America/Toronto",
+    "name": "Eastern Standard Time",
+    "abbreviation": "EST",
+    "offset": -300,
+    "dstOffset": -240,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["CA"],
+    "majorCities": ["Toronto", "Montreal", "Ottawa"],
+    "coordinates": {
+      "lat": 43.6532,
+      "lon": -79.3832
+    }
+  },
+  {
+    "id": "America/Vancouver",
+    "name": "Pacific Standard Time",
+    "abbreviation": "PST",
+    "offset": -480,
+    "dstOffset": -420,
+    "dstRules": {
+      "start": "Second Sunday in March",
+      "end": "First Sunday in November",
+      "observes": true
+    },
+    "countries": ["CA"],
+    "majorCities": ["Vancouver", "Victoria"],
+    "coordinates": {
+      "lat": 49.2827,
+      "lon": -123.1207
+    }
+  },
+  {
+    "id": "America/Mexico_City",
+    "name": "Central Standard Time",
+    "abbreviation": "CST",
+    "offset": -360,
+    "dstOffset": -300,
+    "dstRules": {
+      "start": "First Sunday in April",
+      "end": "Last Sunday in October",
+      "observes": true
+    },
+    "countries": ["MX"],
+    "majorCities": ["Mexico City", "Guadalajara"],
+    "coordinates": {
+      "lat": 19.4326,
+      "lon": -99.1332
+    }
+  },
+  {
     "id": "Europe/London",
     "name": "Greenwich Mean Time",
     "abbreviation": "GMT",
@@ -36,6 +204,174 @@
     }
   },
   {
+    "id": "Europe/Paris",
+    "name": "Central European Time",
+    "abbreviation": "CET",
+    "offset": 60,
+    "dstOffset": 120,
+    "dstRules": {
+      "start": "Last Sunday in March",
+      "end": "Last Sunday in October",
+      "observes": true
+    },
+    "countries": ["FR", "DE", "IT", "ES"],
+    "majorCities": ["Paris", "Berlin", "Rome", "Madrid"],
+    "coordinates": {
+      "lat": 48.8566,
+      "lon": 2.3522
+    }
+  },
+  {
+    "id": "Europe/Athens",
+    "name": "Eastern European Time",
+    "abbreviation": "EET",
+    "offset": 120,
+    "dstOffset": 180,
+    "dstRules": {
+      "start": "Last Sunday in March",
+      "end": "Last Sunday in October",
+      "observes": true
+    },
+    "countries": ["GR", "FI", "RO"],
+    "majorCities": ["Athens", "Helsinki", "Bucharest"],
+    "coordinates": {
+      "lat": 37.9838,
+      "lon": 23.7275
+    }
+  },
+  {
+    "id": "Europe/Moscow",
+    "name": "Moscow Standard Time",
+    "abbreviation": "MSK",
+    "offset": 180,
+    "countries": ["RU"],
+    "majorCities": ["Moscow", "St. Petersburg"],
+    "coordinates": {
+      "lat": 55.7558,
+      "lon": 37.6173
+    }
+  },
+  {
+    "id": "Africa/Johannesburg",
+    "name": "South Africa Standard Time",
+    "abbreviation": "SAST",
+    "offset": 120,
+    "countries": ["ZA"],
+    "majorCities": ["Johannesburg", "Cape Town"],
+    "coordinates": {
+      "lat": -26.2041,
+      "lon": 28.0473
+    }
+  },
+  {
+    "id": "Africa/Lagos",
+    "name": "West Africa Time",
+    "abbreviation": "WAT",
+    "offset": 60,
+    "countries": ["NG"],
+    "majorCities": ["Lagos", "Abuja"],
+    "coordinates": {
+      "lat": 6.5244,
+      "lon": 3.3792
+    }
+  },
+  {
+    "id": "Asia/Dubai",
+    "name": "Gulf Standard Time",
+    "abbreviation": "GST",
+    "offset": 240,
+    "countries": ["AE"],
+    "majorCities": ["Dubai", "Abu Dhabi"],
+    "coordinates": {
+      "lat": 25.2048,
+      "lon": 55.2708
+    }
+  },
+  {
+    "id": "Asia/Karachi",
+    "name": "Pakistan Standard Time",
+    "abbreviation": "PKT",
+    "offset": 300,
+    "countries": ["PK"],
+    "majorCities": ["Karachi", "Lahore"],
+    "coordinates": {
+      "lat": 24.8607,
+      "lon": 67.0011
+    }
+  },
+  {
+    "id": "Asia/Kolkata",
+    "name": "India Standard Time",
+    "abbreviation": "IST",
+    "offset": 330,
+    "countries": ["IN"],
+    "majorCities": ["Mumbai", "Delhi", "Bangalore"],
+    "coordinates": {
+      "lat": 19.076,
+      "lon": 72.8777
+    }
+  },
+  {
+    "id": "Asia/Dhaka",
+    "name": "Bangladesh Standard Time",
+    "abbreviation": "BST",
+    "offset": 360,
+    "countries": ["BD"],
+    "majorCities": ["Dhaka", "Chittagong"],
+    "coordinates": {
+      "lat": 23.8103,
+      "lon": 90.4125
+    }
+  },
+  {
+    "id": "Asia/Bangkok",
+    "name": "Indochina Time",
+    "abbreviation": "ICT",
+    "offset": 420,
+    "countries": ["TH", "VN"],
+    "majorCities": ["Bangkok", "Hanoi"],
+    "coordinates": {
+      "lat": 13.7563,
+      "lon": 100.5018
+    }
+  },
+  {
+    "id": "Asia/Singapore",
+    "name": "Singapore Standard Time",
+    "abbreviation": "SGT",
+    "offset": 480,
+    "countries": ["SG"],
+    "majorCities": ["Singapore"],
+    "coordinates": {
+      "lat": 1.3521,
+      "lon": 103.8198
+    }
+  },
+  {
+    "id": "Asia/Hong_Kong",
+    "name": "Hong Kong Time",
+    "abbreviation": "HKT",
+    "offset": 480,
+    "countries": ["HK"],
+    "majorCities": ["Hong Kong"],
+    "coordinates": {
+      "lat": 22.3193,
+      "lon": 114.1694
+    }
+  },
+  {
+    "id": "Asia/Shanghai",
+    "name": "China Standard Time",
+    "abbreviation": "CST",
+    "offset": 480,
+    "countries": ["CN"],
+    "majorCities": ["Shanghai", "Beijing"],
+    "coordinates": {
+      "lat": 31.2304,
+      "lon": 121.4737
+    }
+  },
+  {
     "id": "Asia/Tokyo",
     "name": "Japan Standard Time",
     "abbreviation": "JST",
@@ -45,6 +381,96 @@
     "coordinates": {
       "lat": 35.6762,
       "lon": 139.6503
+    }
+  },
+  {
+    "id": "Asia/Seoul",
+    "name": "Korea Standard Time",
+    "abbreviation": "KST",
+    "offset": 540,
+    "countries": ["KR"],
+    "majorCities": ["Seoul", "Busan"],
+    "coordinates": {
+      "lat": 37.5665,
+      "lon": 126.978
+    }
+  },
+  {
+    "id": "Australia/Sydney",
+    "name": "Australian Eastern Daylight Time",
+    "abbreviation": "AEDT",
+    "offset": 600,
+    "dstOffset": 660,
+    "dstRules": {
+      "start": "First Sunday in October",
+      "end": "First Sunday in April",
+      "observes": true
+    },
+    "countries": ["AU"],
+    "majorCities": ["Sydney", "Melbourne"],
+    "coordinates": {
+      "lat": -33.8688,
+      "lon": 151.2093
+    }
+  },
+  {
+    "id": "Australia/Brisbane",
+    "name": "Australian Eastern Standard Time",
+    "abbreviation": "AEST",
+    "offset": 600,
+    "countries": ["AU"],
+    "majorCities": ["Brisbane"],
+    "coordinates": {
+      "lat": -27.4698,
+      "lon": 153.0251
+    }
+  },
+  {
+    "id": "Australia/Adelaide",
+    "name": "Australian Central Daylight Time",
+    "abbreviation": "ACDT",
+    "offset": 570,
+    "dstOffset": 630,
+    "dstRules": {
+      "start": "First Sunday in October",
+      "end": "First Sunday in April",
+      "observes": true
+    },
+    "countries": ["AU"],
+    "majorCities": ["Adelaide"],
+    "coordinates": {
+      "lat": -34.9285,
+      "lon": 138.6007
+    }
+  },
+  {
+    "id": "Australia/Perth",
+    "name": "Australian Western Standard Time",
+    "abbreviation": "AWST",
+    "offset": 480,
+    "countries": ["AU"],
+    "majorCities": ["Perth"],
+    "coordinates": {
+      "lat": -31.9505,
+      "lon": 115.8605
+    }
+  },
+  {
+    "id": "Pacific/Auckland",
+    "name": "New Zealand Daylight Time",
+    "abbreviation": "NZDT",
+    "offset": 720,
+    "dstOffset": 780,
+    "dstRules": {
+      "start": "Last Sunday in September",
+      "end": "First Sunday in April",
+      "observes": true
+    },
+    "countries": ["NZ"],
+    "majorCities": ["Auckland", "Wellington"],
+    "coordinates": {
+      "lat": -36.8485,
+      "lon": 174.7633
     }
   }
 ]
