@@ -1,4 +1,5 @@
 import { UIController } from './modules/UIController';
+import './styles/theme.css';
 import './styles/main.css';
 import './styles/pinned-panel.css';
 import './styles/search.css';

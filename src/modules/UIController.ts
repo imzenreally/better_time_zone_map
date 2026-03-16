@@ -3,6 +3,7 @@ import { TimeZoneEngine } from './TimeZoneEngine';
 import { MapRenderer } from './MapRenderer';
 import { PinnedZonesPanel } from './PinnedZonesPanel';
 import { SearchBar } from './SearchBar';
+import { ThemeToggle } from './ThemeToggle';
 import type { TimeZone } from '../types/TimeZone';
 import type { AppState } from '../types/AppState';
 import { DEFAULT_APP_STATE } from '../types/AppState';
@@ -15,6 +16,7 @@ export class UIController {
   private mapRenderer: MapRenderer | null = null;
   private pinnedZonesPanel: PinnedZonesPanel | null = null;
   private searchBar: SearchBar | null = null;
+  private themeToggle: ThemeToggle | null = null;
   private timeZones: TimeZone[] | null = null;
   private state: AppState;
 
@@ -35,6 +37,18 @@ export class UIController {
 
       // Step 2.5: Load persisted pinned zones
       this.loadPinnedZones();
+
+      // Step 2.7: Load and apply theme
+      this.loadTheme();
+
+      // Step 2.9: Initialize ThemeToggle
+      this.themeToggle = new ThemeToggle(this);
+      const toggleButton = this.themeToggle.render();
+      this.themeToggle.updateIcon(this.state.theme);
+      document.body.appendChild(toggleButton);
+
+      // Apply theme
+      this.applyTheme();
 
       // Step 3: Initialize MapRenderer with canvas dimensions
       const { width, height } = this.getCanvasDimensions();
@@ -334,6 +348,9 @@ Countries: ${zone.countries.join(', ')}
         this.mapRenderer.setTimeZoneEngine(this.timeZoneEngine);
       }
 
+      // Set theme
+      this.mapRenderer.setTheme(this.state.theme);
+
       // Re-render the map
       this.mapRenderer.render();
 
@@ -387,6 +404,38 @@ Countries: ${zone.countries.join(', ')}
       } catch (e) {
         console.warn('Failed to load pinned zones from localStorage');
       }
+    }
+  }
+
+  setTheme(theme: 'light' | 'dark'): void {
+    this.state.theme = theme;
+    this.persistTheme();
+    this.applyTheme();
+
+    if (this.themeToggle) {
+      this.themeToggle.updateIcon(theme);
+    }
+  }
+
+  private applyTheme(): void {
+    document.body.classList.remove('theme-light', 'theme-dark');
+    document.body.classList.add(`theme-${this.state.theme}`);
+
+    // Notify MapRenderer
+    if (this.mapRenderer) {
+      this.mapRenderer.setTheme(this.state.theme);
+      this.mapRenderer.render();
+    }
+  }
+
+  private persistTheme(): void {
+    localStorage.setItem('tzmap_theme', this.state.theme);
+  }
+
+  private loadTheme(): void {
+    const saved = localStorage.getItem('tzmap_theme') as 'light' | 'dark' | null;
+    if (saved) {
+      this.state.theme = saved;
     }
   }
 }

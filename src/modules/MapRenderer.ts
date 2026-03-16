@@ -11,6 +11,7 @@ export class MapRenderer {
   private ctx: CanvasRenderingContext2D;
   private timeZones: TimeZone[];
   private timeZoneEngine: TimeZoneEngine | null = null;
+  private theme: 'light' | 'dark' = 'light';
 
   constructor(canvas: HTMLCanvasElement, timeZones: TimeZone[], options: MapRendererOptions) {
     this.canvas = canvas;
@@ -31,9 +32,13 @@ export class MapRenderer {
     this.timeZoneEngine = engine;
   }
 
+  setTheme(theme: 'light' | 'dark'): void {
+    this.theme = theme;
+  }
+
   render(): void {
-    // Clear canvas
-    this.ctx.fillStyle = '#e8f4f8';
+    // Clear canvas with theme-aware background
+    this.ctx.fillStyle = this.theme === 'dark' ? '#0a0a0a' : '#e8f4f8';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw simple world map representation (rectangles for time zones)
@@ -78,7 +83,7 @@ export class MapRenderer {
       );
 
       // Draw zone label
-      this.ctx.fillStyle = '#1a1a1a';
+      this.ctx.fillStyle = this.theme === 'dark' ? '#e8e8e8' : '#1a1a1a';
       this.ctx.font = '12px sans-serif';
       this.ctx.textAlign = 'center';
       this.ctx.fillText(zone.abbreviation, x, this.canvas.height * 0.5 + 5);
@@ -114,20 +119,25 @@ export class MapRenderer {
   private calculateDayNightColor(hour: number, minute: number): string {
     const decimalHour = hour + minute / 60;
 
+    // Adjust colors for dark mode
+    const nightColor = this.theme === 'dark' ? '#0a0f1a' : '#1a2332';
+    const dayColor = this.theme === 'dark' ? '#e8e0c7' : '#fef3c7';
+    const dawnColor = '#fbbf24'; // Keep same for both themes
+
     if (decimalHour >= 20 || decimalHour < 6) {
       // Night
-      return '#1a2332';
+      return nightColor;
     } else if (decimalHour >= 6 && decimalHour < 8) {
       // Dawn (gradient)
       const progress = (decimalHour - 6) / 2; // 0 to 1
-      return this.interpolateColor('#1a2332', '#fbbf24', progress);
+      return this.interpolateColor(nightColor, dawnColor, progress);
     } else if (decimalHour >= 8 && decimalHour < 18) {
       // Day
-      return '#fef3c7';
+      return dayColor;
     } else {
       // Dusk (gradient)
       const progress = (decimalHour - 18) / 2; // 0 to 1
-      return this.interpolateColor('#fef3c7', '#1a2332', progress);
+      return this.interpolateColor(dayColor, nightColor, progress);
     }
   }
 
