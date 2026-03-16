@@ -1,5 +1,6 @@
 import { UIController } from './modules/UIController';
 import './styles/main.css';
+import './styles/pinned-panel.css';
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', async () => {
