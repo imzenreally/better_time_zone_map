@@ -166,10 +166,14 @@ export class SearchBar {
         this.updateHighlight();
       });
 
-      this.dropdown.appendChild(result);
+      if (this.dropdown) {
+        this.dropdown.appendChild(result);
+      }
     });
 
-    this.dropdown.classList.remove('hidden');
+    if (this.dropdown) {
+      this.dropdown.classList.remove('hidden');
+    }
   }
 
   private handleKeyDown(e: KeyboardEvent): void {

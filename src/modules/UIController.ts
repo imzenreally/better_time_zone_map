@@ -2,6 +2,7 @@ import { DataManager } from './DataManager';
 import { TimeZoneEngine } from './TimeZoneEngine';
 import { MapRenderer } from './MapRenderer';
 import { PinnedZonesPanel } from './PinnedZonesPanel';
+import { SearchBar } from './SearchBar';
 import type { TimeZone } from '../types/TimeZone';
 import type { AppState } from '../types/AppState';
 import { DEFAULT_APP_STATE } from '../types/AppState';
@@ -13,6 +14,7 @@ export class UIController {
   private timeZoneEngine: TimeZoneEngine | null = null;
   private mapRenderer: MapRenderer | null = null;
   private pinnedZonesPanel: PinnedZonesPanel | null = null;
+  private searchBar: SearchBar | null = null;
   private timeZones: TimeZone[] | null = null;
   private state: AppState;
 
@@ -56,6 +58,13 @@ export class UIController {
           this.timeZoneEngine
         );
         this.pinnedZonesPanel.render(this.state.pinnedZoneIds);
+      }
+
+      // Step 4.7: Initialize SearchBar
+      const searchContainer = document.getElementById('search-bar');
+      if (searchContainer) {
+        this.searchBar = new SearchBar(searchContainer, this, this.timeZones);
+        this.searchBar.render();
       }
 
       // Step 5: Set up event listeners
