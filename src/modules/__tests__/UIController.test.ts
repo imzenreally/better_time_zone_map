@@ -39,6 +39,7 @@ describe('UIController - Clock Ticker', () => {
 
   it('should call updateAllTimes every second', () => {
     vi.useFakeTimers();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateSpy = vi.spyOn(controller as any, 'updateAllTimes');
 
     controller.startClockTicker();
