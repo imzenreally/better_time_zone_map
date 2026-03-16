@@ -82,10 +82,17 @@ export class MapRenderer {
         this.canvas.height * 0.4
       );
 
-      // Draw zone label
-      this.ctx.fillStyle = this.theme === 'dark' ? '#e8e8e8' : '#1a1a1a';
+      // Draw zone label with stroke for better visibility
       this.ctx.font = '12px sans-serif';
       this.ctx.textAlign = 'center';
+
+      // Draw text stroke (outline)
+      this.ctx.strokeStyle = this.theme === 'dark' ? '#000000' : '#ffffff';
+      this.ctx.lineWidth = 3;
+      this.ctx.strokeText(zone.abbreviation, x, this.canvas.height * 0.5 + 5);
+
+      // Draw text fill
+      this.ctx.fillStyle = this.theme === 'dark' ? '#e8e8e8' : '#1a1a1a';
       this.ctx.fillText(zone.abbreviation, x, this.canvas.height * 0.5 + 5);
     });
   }
